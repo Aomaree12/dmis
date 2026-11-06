@@ -3,86 +3,52 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>One Stop Service NHSO - Bamrasnaradura</title>
-    <!-- Bootstrap 5 -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <title>One Stop Service NHSO - หน่วยไตเทียม</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
     <!-- SweetAlert2 -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap');
+        
         body {
-            background: linear-gradient(135deg, #e0f2f1 0%, #b2dfdb 100%);
-            min-height: 100vh;
             font-family: 'Sarabun', sans-serif;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
+            background: linear-gradient(135deg, #f0fdfa 0%, #ccfbf1 100%);
+            min-height: 100vh;
         }
-        .glass-card {
-            background: rgba(255, 255, 255, 0.75);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border-radius: 24px;
-            border: 1px solid rgba(255, 255, 255, 0.6);
-            box-shadow: 0 10px 40px 0 rgba(0, 105, 92, 0.15);
-            padding: 40px 30px;
-            width: 100%;
-            max-width: 600px;
+        
+        /* สไตล์ปุ่มลิงก์ (Menu Card) */
+        .menu-card {
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+            background: rgba(255, 255, 255, 0.9);
+            border: 1px solid rgba(20, 184, 166, 0.2);
             position: relative;
         }
         
-        /* สไตล์ปุ่มกด */
-        .btn-mint {
-            background-color: #4db6ac;
-            color: white;
-            border: none;
-            border-radius: 16px;
-            padding: 16px;
-            font-size: 1.1rem;
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            margin-bottom: 12px;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 10px rgba(77, 182, 172, 0.2);
-        }
-        .btn-mint:hover {
-            background-color: #26a69a;
-            color: white;
-            transform: translateY(-3px);
-            box-shadow: 0 6px 15px rgba(77, 182, 172, 0.4);
+        .menu-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(13, 148, 136, 0.15);
+            border-color: rgba(20, 184, 166, 0.5);
         }
 
-        /* ปุ่ม Admin โหมด */
-        .admin-controls { display: none; gap: 5px; margin-left: auto; }
+        /* โหมด Admin สำหรับแก้ไข/ลบ */
+        .admin-controls { display: none; }
         .is-admin .admin-controls { display: flex; }
-        .btn-admin-toggle {
-            position: absolute; top: 20px; right: 20px; 
-            background: none; border: none; color: #00796b; opacity: 0.3;
-            transition: all 0.3s ease;
-        }
-        .btn-admin-toggle:hover { opacity: 1; transform: rotate(90deg); }
-
-        /* แอนิเมชันไอคอนน่ารักๆ */
+        
+        /* แอนิเมชันไอคอนน่ารักๆ ใน Header */
         .cute-icon-wrapper {
             display: inline-block;
-            margin-bottom: 15px;
-            animation: float 3s ease-in-out infinite; /* เคลื่อนไหวลอยขึ้นลง */
-        }
-        .cute-icon {
-            font-size: 3.5rem;
-            color: #00796b;
-            position: relative;
+            animation: float 3s ease-in-out infinite;
         }
         .cute-heart {
-            font-size: 1.5rem;
-            color: #ff5252;
             position: absolute;
             top: -5px;
             right: -10px;
+            color: #ef4444;
         }
 
         @keyframes float {
@@ -92,106 +58,195 @@
         }
     </style>
 </head>
-<body>
+<body class="bg-gradient-to-br from-teal-50 to-emerald-100 pb-12" id="app-body">
 
-    <div class="glass-card text-center" id="main-card">
-        <!-- ปุ่มเฟืองเปิดโหมด Admin (ซ่อนอยู่มุมขวาบน) -->
-        <button class="btn-admin-toggle" onclick="toggleAdmin()">
-            <i class="fas fa-cog fa-lg"></i>
-        </button>
+    <!-- Header Section -->
+    <div class="bg-white/80 backdrop-blur-md shadow-lg border-b border-teal-200 sticky top-0 z-40">
+        <div class="container mx-auto px-4 py-4 md:py-6">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-4">
+                    <!-- ปุ่มเปิดฟอร์มเพิ่มลิงก์ (ซ่อนไว้ รอเปิด Admin) -->
+                    <div id="add-btn-container" class="admin-controls hidden">
+                        <button onclick="showForm('add')" class="bg-gradient-to-r from-teal-500 to-emerald-500 p-3 md:p-4 rounded-xl hover:from-teal-600 hover:to-emerald-600 transition-all duration-300 shadow-lg hover:shadow-xl" title="เพิ่มระบบใหม่">
+                            <i class="fas fa-plus text-white text-xl md:text-2xl"></i>
+                        </button>
+                    </div>
+                    
+                    <!-- โลโก้และชื่อระบบ -->
+                    <div>
+                        <div class="flex items-center gap-3">
+                            <div class="cute-icon-wrapper relative text-teal-600 text-3xl">
+                                <i class="fas fa-hospital-user"></i>
+                                <i class="fas fa-heart fa-beat cute-heart text-lg"></i>
+                            </div>
+                            <div>
+                                <h1 class="text-xl md:text-2xl font-bold text-teal-800">One Stop Service NHSO</h1>
+                                <p class="text-sm font-medium text-teal-600">หน่วยไตเทียม สถาบันบำราศนราดูร</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
-        <!-- ส่วนหัว (Header) พร้อมไอคอนดุ๊กดิ๊กและซับไตเติล -->
-        <div class="header-section mb-4">
-            <div class="cute-icon-wrapper">
-                <div class="cute-icon">
-                    <i class="fas fa-hospital-user"></i>
-                    <i class="fas fa-heart fa-beat cute-heart"></i> <!-- ไอคอนหัวใจเต้น -->
+                <!-- ปุ่มฟันเฟืองเปิด Admin Mode -->
+                <button onclick="toggleAdmin()" class="text-teal-300 hover:text-teal-600 transition-colors p-2" title="โหมดจัดการระบบ">
+                    <i class="fas fa-cog text-2xl hover:rotate-90 transition-transform duration-300"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Alert ข้อแนะนำ SSO -->
+    <div class="container mx-auto px-4 mt-8">
+        <div class="bg-blue-50 border-l-4 border-blue-400 p-4 rounded-r-xl shadow-sm">
+            <div class="flex">
+                <div class="flex-shrink-0">
+                    <i class="fas fa-info-circle text-blue-400"></i>
+                </div>
+                <div class="ml-3">
+                    <p class="text-sm text-blue-700">
+                        <strong>คำแนะนำ:</strong> กรุณากดปุ่ม <b>ล็อกอินยืนยันตัวตน SSO</b> เป็นอันดับแรก เพื่อสแกน ThaiD จากนั้นจึงคลิกเข้าโปรแกรมอื่นๆ
+                    </p>
                 </div>
             </div>
-            <h3 style="color: #00695c; font-weight: bold; margin-bottom: 5px; letter-spacing: 0.5px;">
-                One Stop Service NHSO
-            </h3>
-            <p style="color: #00897b; font-size: 1rem; margin-bottom: 0; font-weight: 500;">
-                หน่วยไตเทียม สถาบันบำราศนราดูร
-            </p>
         </div>
-        
-        <!-- ปุ่มสำหรับเพิ่มลิงก์ (แสดงเฉพาะตอนเปิด Admin Mode) -->
-        <div id="add-btn-container" style="display: none;" class="mb-4">
-            <button class="btn btn-outline-success w-100" style="border-radius: 12px; border-width: 2px;" onclick="showForm('add')">
-                <i class="fas fa-plus me-2"></i>เพิ่มลิงก์ใหม่
-            </button>
-        </div>
+    </div>
 
-        <!-- คอนเทนเนอร์สำหรับใส่ปุ่มลิงก์ -->
-        <div id="button-container">
-            <div class="spinner-grow text-success" role="status">
-                <span class="visually-hidden">Loading...</span>
+    <!-- ปุ่มลิงก์ Grid Container -->
+    <div class="container mx-auto px-4 py-8">
+        <div id="button-container" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            <!-- Loading Spinner -->
+            <div class="col-span-full flex justify-center py-10">
+                <i class="fas fa-spinner fa-spin text-4xl text-teal-500"></i>
             </div>
         </div>
     </div>
 
     <script>
-        // เอาลิงก์ Web App จาก Google Apps Script (เวอร์ชันล่าสุด) มาใส่ที่นี่
+        // *** เปลี่ยน YOUR_WEB_APP_URL เป็นลิงก์ที่ได้จาก Google Apps Script ***
         const GAS_URL = 'https://script.google.com/macros/s/AKfycby87kab_L3_Oo14Pa9RQS9PnqfhwPgGCZQCZzilyGTdZHkdiQa2hRpqoNbupbzpQNSd/exec';
+        
         let isAdmin = false;
         let currentLinks = [];
 
+        // ฟังก์ชันเปิด/ปิด โหมด Admin
         function toggleAdmin() {
             isAdmin = !isAdmin;
-            document.getElementById('main-card').classList.toggle('is-admin', isAdmin);
-            document.getElementById('add-btn-container').style.display = isAdmin ? 'block' : 'none';
+            document.getElementById('app-body').classList.toggle('is-admin', isAdmin);
+            
+            // แสดง/ซ่อน ปุ่มเพิ่มลิงก์มุมซ้ายบน
+            const addBtn = document.getElementById('add-btn-container');
+            if (isAdmin) {
+                addBtn.classList.remove('hidden');
+                addBtn.style.display = 'flex';
+                Swal.fire({
+                    toast: true, position: 'top-end', icon: 'info',
+                    title: 'เปิดโหมดแก้ไข', showConfirmButton: false, timer: 1500
+                });
+            } else {
+                addBtn.classList.add('hidden');
+                addBtn.style.display = 'none';
+            }
         }
 
+        // ดึงข้อมูลจาก Google Sheets
         async function fetchLinks() {
             try {
                 const res = await fetch(GAS_URL);
                 currentLinks = await res.json();
                 renderLinks();
             } catch (err) {
-                document.getElementById('button-container').innerHTML = `<div class="alert alert-danger" style="border-radius: 12px;">โหลดข้อมูลล้มเหลว กรุณารีเฟรชหน้าเว็บ</div>`;
+                document.getElementById('button-container').innerHTML = `
+                    <div class="col-span-full text-center text-red-500 bg-red-50 p-4 rounded-xl">
+                        <i class="fas fa-exclamation-triangle text-2xl mb-2"></i><br>โหลดข้อมูลล้มเหลว กรุณารีเฟรชหน้าเว็บ
+                    </div>`;
             }
         }
 
+        // สร้างการ์ดปุ่มลิงก์ (Menu Card)
         function renderLinks() {
             const container = document.getElementById('button-container');
             container.innerHTML = '';
             
-            currentLinks.forEach((link) => {
+            currentLinks.forEach((link, index) => {
+                const isSSO = index === 0; // ปุ่มแรก
                 const div = document.createElement('div');
-                div.className = 'd-flex align-items-center w-100';
                 
+                // สไตล์แยกสำหรับปุ่ม SSO (ไล่สีส้มแดง) และปุ่มทั่วไป (Mint)
+                const ssoCardStyle = "background: linear-gradient(135deg, #fb923c 0%, #ef4444 100%); border-color: #fdba74; color: white;";
+                const normalCardStyle = ""; 
+                
+                const iconBg = isSSO ? 'bg-white/20 border-white/30' : 'bg-teal-50 border-teal-100';
+                const iconColor = isSSO ? 'text-white' : 'text-teal-500';
+                const textColor = isSSO ? 'text-white' : 'text-gray-800';
+                const bottomText = isSSO ? 'text-white' : 'text-teal-600';
+                const divider = isSSO ? 'border-white/30' : 'border-teal-50';
+
                 div.innerHTML = `
-                    <a href="${link.url}" target="_blank" class="btn btn-mint flex-grow-1 text-start">
-                        <i class="${link.icon} fa-fw" style="font-size: 1.3rem;"></i>
-                        <span>${link.name}</span>
-                    </a>
-                    <div class="admin-controls mb-3">
-                        <button class="btn btn-warning btn-sm ms-2" style="border-radius: 8px;" onclick="showForm('update', '${link.id}')"><i class="fas fa-edit"></i></button>
-                        <button class="btn btn-danger btn-sm" style="border-radius: 8px;" onclick="deleteLink('${link.id}')"><i class="fas fa-trash"></i></button>
+                    <div class="menu-card rounded-2xl p-6 h-full flex flex-col justify-between cursor-pointer" 
+                         style="${isSSO ? ssoCardStyle : normalCardStyle}" 
+                         onclick="window.open('${link.url}', '_blank')">
+                        
+                        <!-- ไอคอนแก้ไข/ลบ มุมขวาบน (จะโชว์เมื่อเปิด Admin) -->
+                        <div class="admin-controls absolute top-3 right-3 gap-2 z-10" onclick="event.stopPropagation()">
+                            <button onclick="showForm('update', '${link.id}')" class="w-8 h-8 bg-yellow-100 text-yellow-600 hover:bg-yellow-200 rounded-full flex items-center justify-center transition-colors shadow-sm" title="แก้ไข">
+                                <i class="fas fa-edit text-xs"></i>
+                            </button>
+                            ${!isSSO ? `
+                            <button onclick="deleteLink('${link.id}')" class="w-8 h-8 bg-red-100 text-red-600 hover:bg-red-200 rounded-full flex items-center justify-center transition-colors shadow-sm" title="ลบ">
+                                <i class="fas fa-trash text-xs"></i>
+                            </button>
+                            ` : ''}
+                        </div>
+
+                        <!-- ส่วนเนื้อหาปุ่ม -->
+                        <div class="text-center mt-2 flex-grow">
+                            <div class="w-16 h-16 mx-auto mb-4 rounded-2xl flex items-center justify-center border-2 ${iconBg}">
+                                <i class="${link.icon} text-3xl ${iconColor} ${isSSO ? 'animate-pulse' : ''}"></i>
+                            </div>
+                            <h3 class="font-bold text-sm md:text-base leading-snug ${textColor}">${link.name}</h3>
+                        </div>
+                        
+                        <!-- แถบสีด้านล่าง -->
+                        <div class="mt-4 pt-4 border-t text-center ${divider}">
+                            <span class="text-xs font-semibold uppercase tracking-wider ${bottomText}">
+                                ${isSSO ? 'เริ่มทำงานคลิกที่นี่' : 'คลิกเพื่อเปิดระบบ'}
+                            </span>
+                        </div>
                     </div>
                 `;
                 container.appendChild(div);
             });
         }
 
+        // ฟอร์ม SweetAlert2 แบบเดียวกับดีไซน์เดิม
         function showForm(action, id = null) {
             let targetLink = id ? currentLinks.find(l => l.id == id) : { name: '', url: '', icon: 'fas fa-link' };
             
             Swal.fire({
-                title: action === 'add' ? '✨ เพิ่มลิงก์ใหม่' : '✏️ แก้ไขลิงก์',
+                title: action === 'add' ? '<h2 class="text-2xl font-bold text-teal-700">เพิ่มระบบใหม่</h2>' : '<h2 class="text-2xl font-bold text-teal-700">แก้ไขระบบ</h2>',
                 html: `
-                    <input id="swal-name" class="swal2-input" placeholder="ชื่อระบบ (เช่น โปรแกรม e-Claim)" value="${targetLink.name}">
-                    <input id="swal-url" class="swal2-input" placeholder="URL ลิงก์ (ต้องมี https://)" value="${targetLink.url}">
-                    <input id="swal-icon" class="swal2-input" placeholder="ไอคอน (เช่น fas fa-desktop)" value="${targetLink.icon}">
-                    <div class="mt-2 text-start" style="font-size: 0.8rem; color: #666;">
-                        * ดูชื่อไอคอนได้ที่เว็บ Font Awesome (Free)
+                    <div class="text-left space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">ชื่อระบบ</label>
+                            <input id="swal-name" class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-teal-500 outline-none" placeholder="เช่น โปรแกรม e-Claim" value="${targetLink.name}">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">URL (ลิงก์)</label>
+                            <input id="swal-url" class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-teal-500 outline-none" placeholder="https://..." value="${targetLink.url}">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">ไอคอน (Font Awesome)</label>
+                            <input id="swal-icon" class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-teal-500 outline-none" placeholder="fas fa-desktop" value="${targetLink.icon}">
+                            <div class="mt-1 text-xs text-gray-500">* ดูชื่อไอคอนได้ที่เว็บ Font Awesome (Free)</div>
+                        </div>
                     </div>
                 `,
                 showCancelButton: true,
-                confirmButtonColor: '#4db6ac',
-                confirmButtonText: 'บันทึก',
+                confirmButtonColor: '#14b8a6',
+                cancelButtonColor: '#9ca3af',
+                confirmButtonText: 'บันทึกข้อมูล',
                 cancelButtonText: 'ยกเลิก',
+                customClass: { popup: 'rounded-2xl' },
                 preConfirm: () => {
                     return {
                         action: action,
@@ -206,21 +261,30 @@
             });
         }
 
+        // ยืนยันการลบ
         function deleteLink(id) {
             Swal.fire({
                 title: 'ยืนยันการลบ?',
-                text: "ลบแล้วจะไม่สามารถกู้คืนได้นะ!",
+                text: "หากลบแล้วจะไม่สามารถกู้คืนได้!",
                 icon: 'warning',
                 showCancelButton: true,
-                confirmButtonColor: '#d33',
-                cancelButtonColor: '#b0bec5',
-                confirmButtonText: 'ใช่, ลบเลย!'
+                confirmButtonColor: '#ef4444',
+                cancelButtonColor: '#9ca3af',
+                confirmButtonText: 'ใช่, ลบเลย',
+                cancelButtonText: 'ยกเลิก',
+                customClass: { popup: 'rounded-2xl' }
             }).then((result) => {
                 if (result.isConfirmed) submitData({ action: 'delete', id: id });
             });
         }
 
+        // ส่งข้อมูลไป Google Apps Script
         async function submitData(payload) {
+            if(!payload.name || !payload.url) {
+                Swal.fire({ icon: 'warning', title: 'กรอกข้อมูลไม่ครบ', text: 'กรุณากรอกชื่อและลิงก์', confirmButtonColor: '#14b8a6' });
+                return;
+            }
+
             Swal.fire({ title: 'กำลังบันทึก...', allowOutsideClick: false, didOpen: () => { Swal.showLoading() } });
             try {
                 await fetch(GAS_URL, {
@@ -229,12 +293,13 @@
                     body: JSON.stringify(payload)
                 });
                 await fetchLinks();
-                Swal.fire({ icon: 'success', title: 'บันทึกสำเร็จ!', timer: 1500, showConfirmButton: false });
+                Swal.fire({ icon: 'success', title: 'บันทึกสำเร็จ!', timer: 1500, showConfirmButton: false, customClass: { popup: 'rounded-2xl' } });
             } catch (err) {
-                Swal.fire('เกิดข้อผิดพลาด', err.message, 'error');
+                Swal.fire('เกิดข้อผิดพลาด', 'ไม่สามารถเชื่อมต่อเซิร์ฟเวอร์ได้', 'error');
             }
         }
 
+        // โหลดข้อมูลทันทีเมื่อเปิดหน้าเว็บ
         window.onload = fetchLinks;
     </script>
 </body>
